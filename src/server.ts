@@ -1,28 +1,19 @@
-import express from "express";
-import mongoose from "mongoose";
-
-import bodyParser from "body-parser";
-import cors from "cors";
-
-const app = express();
-const port = 3000;
-
-mongoose.connect("mongodb://localhost/tms", {});
-
-const db = mongoose.connection;
-
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", function () {
-  console.log("Connected to MongoDB");
+import colors from "colors";
+import * as dotenv from "dotenv";
+dotenv.config({
+  path: "src/config/config.env",
+  debug: true,
 });
+colors.enable();
+import { config } from "./config/config";
+import app from "./app";
+import ConnectDB from "./config/db";
 
-app.use(bodyParser.json());
-app.use(cors());
+ConnectDB();
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(config.PORT, () => {
+  console.log(
+    `Server is running on port ${config.PORT} on ${config.NODE_ENV} mode`.green
+      .inverse
+  );
 });
